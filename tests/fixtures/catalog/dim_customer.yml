@@ -1,0 +1,12 @@
+# catalog/warehouse/dim_customer.yml
+layer: dwh
+namespace: core
+table: DimCustomer
+description: Conformed customer dimension
+owner: data-platform
+columns:
+  - name: CustomerKey
+    type: int
+    description: Surrogate key
+  - name: FullName
+    type: nvarchar(200)

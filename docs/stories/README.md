@@ -6,6 +6,13 @@ One file per story. Each carries a user story, Given/When/Then acceptance criter
 
 Priority: **P0** = the tool is not useful without it. **P1** = needed for Phase 1 to be considered done. **P2** = valuable, cut first if time runs out.
 
+## INFRA — Infrastructure
+
+| ID | Story | Priority |
+|---|---|---|
+| [INFRA-01](INFRA-01-yaml-parser.md) | Parse a YAML subset with line-number tracking | P0 |
+| [INFRA-02](INFRA-02-cli-parsing.md) | Shared CLI argument parsing across commands | P0 |
+
 ## ING — Ingestion
 
 | ID | Story | Priority |
@@ -67,9 +74,10 @@ Priority: **P0** = the tool is not useful without it. **P1** = needed for Phase 
 |---|---|---|
 | [OPS-01](OPS-01-init-scaffold.md) | `mc init` scaffolds a catalog repo with worked examples | P1 |
 | [OPS-02](OPS-02-ci-gate.md) | `validate` usable as a CI gate | P2 |
+| [OPS-03](OPS-03-testing-strategy.md) | Test suite structure: unit vs. integration, and what CI runs | P1 |
 
 ## Suggested order
 
-`OPS-01` → `ING-01..03` → `MOD-01..05` → `VAL-01..03` → `LIN-01..03` → `USE-01..03` → `COV-01` → `EXP-01/02` → `OPS-02`
+`INFRA-01..02` → `OPS-01` → `OPS-03` → `ING-01..03` → `MOD-01..05` → `VAL-01..03` → `LIN-01..03` → `USE-01..03` → `COV-01` → `EXP-01/02` → `OPS-02`
 
 Each epic is independently demoable. The first genuinely useful checkpoint is the end of LIN.

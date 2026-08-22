@@ -44,7 +44,7 @@ Then each has `started_at`, `finished_at`, `status`, and counts for assets seen,
 
 ## Implementation notes
 
-Upsert on the URN unique index. SQLAlchemy Core with the SQLite dialect's `on_conflict_do_update`; the Postgres dialect offers the same call, which is the portability the Core choice buys.
+Upsert on the URN unique index via `rusqlite`, using SQLite's `ON CONFLICT ... DO UPDATE` directly (raw SQL, no query-builder layer — the zero-dependency policy means there is no dialect abstraction to buy portability with; a Postgres backend later would mean writing its upsert SQL by hand too).
 
 Soft-delete pass, scoped hard to this run's source **and** to ingested rows:
 

@@ -64,7 +64,7 @@ dwh
 
 AC5 is the point of the whole epic. "This high-criticality process reads two source fields the warehouse does not carry" is a prioritised piece of work; a usage list on its own is trivia.
 
-"Served" means: the source column has at least one outgoing edge to a `dwh://` or `mart://` column that is not soft-deleted. One query, reused by COV-01 — factor it into `graph/coverage.py` from the start rather than writing it twice.
+"Served" means: the source column has at least one outgoing edge to a `dwh://` or `mart://` column that is not soft-deleted. One query, reused by COV-01 — factor it into `graph/coverage.rs` from the start rather than writing it twice.
 
 AC2's transitive mode reuses LIN-02's downstream CTE, then joins `process_usage` on the reachable set. Default to direct-only: the transitive answer is broader and slower, and the direct answer is what people usually mean.
 

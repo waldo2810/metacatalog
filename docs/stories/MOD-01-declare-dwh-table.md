@@ -1,6 +1,6 @@
 # MOD-01 — Declare a DWH table and its columns in YAML
 
-**Epic:** Modeling · **Priority:** P0 · **Depends on:** OPS-01
+**Epic:** Modeling · **Priority:** P0 · **Depends on:** OPS-01, INFRA-01
 
 ## Story
 

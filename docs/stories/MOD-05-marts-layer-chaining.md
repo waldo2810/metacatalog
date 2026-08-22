@@ -23,7 +23,7 @@ Then edges are created from those DWH columns to the mart column, using the same
 **AC3 — one loader**
 Given mart and DWH files
 When they are parsed
-Then the same Pydantic model, resolver and rule handling process both — layer is data, not a code path.
+Then the same struct, resolver and rule handling process both — layer is data, not a code path.
 
 **AC4 — chained trace**
 Given source → DWH → mart mappings
@@ -66,7 +66,7 @@ AC7 forces a two-pass load: pass one registers every declared asset and column f
 
 AC5 is cheap to implement (compare URN schemes against an allowed-pairs set) and prevents the graph acquiring cycles through layer inversion, which would otherwise surface far away as an infinite traversal.
 
-Marts and DWH tables differ only in URN scheme and allowed upstream layers. Resist adding a `MartSpec` class — one `TableSpec` with a `layer` field is the whole difference.
+Marts and DWH tables differ only in URN scheme and allowed upstream layers. Resist adding a `MartSpec` struct — one `TableSpec` with a `layer` field is the whole difference.
 
 ## Verification
 

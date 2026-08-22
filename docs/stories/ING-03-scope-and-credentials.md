@@ -1,6 +1,6 @@
 # ING-03 — Scope ingestion by database/schema; credentials from env vars only
 
-**Epic:** Ingestion · **Priority:** P1 · **Depends on:** ING-01
+**Epic:** Ingestion · **Priority:** P1 · **Depends on:** ING-01, INFRA-01
 
 ## Story
 
@@ -49,14 +49,14 @@ sources:
   - name: vmprod01
     kind: sqlserver
     host: vmprod01.internal
-    driver: pymssql            # or pyodbc
+    driver: tiberius           # or another driver crate — allowed under the database-driver exception
     connection_env: MC_VMPROD01_DSN
     databases: [SalesDB, OpsDB]
     include_schemas: [dbo, sales]
     exclude_tables: ["tmp_*", "_bak_*"]
 ```
 
-AC2 is the one to get right early — it is far cheaper to make the shape impossible than to scrub a credential out of git history later. Enforce it in the Pydantic model with `model_config = ConfigDict(extra="forbid")` plus an explicit check for the forbidden key names, so a typo'd key is caught by the same mechanism.
+AC2 is the one to get right early — it is far cheaper to make the shape impossible than to scrub a credential out of git history later. Enforce it in the hand-rolled YAML validator by rejecting unknown keys outright, plus an explicit check for the forbidden key names, so a typo'd key is caught by the same mechanism.
 
 AC4 matters more than it looks: soft-delete detection (ING-02) filters by `last_seen < run_ts`. Scoping that query by `source_id` is what stops a single-source ingest from marking every other source's columns as deleted.
 

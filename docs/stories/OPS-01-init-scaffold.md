@@ -1,6 +1,6 @@
 # OPS-01 — `mc init` scaffolds a catalog repo with worked examples
 
-**Epic:** Project ops · **Priority:** P1 · **Depends on:** —
+**Epic:** Project ops · **Priority:** P1 · **Depends on:** INFRA-01, INFRA-02
 
 ## Story
 

@@ -55,7 +55,7 @@ columns:
     transform: CONCAT(FirstName, ' ', LastName)
 ```
 
-Normalize both forms to the same internal structure — a target column owns a list of rules, each owning a list of source refs — in the Pydantic model via a validator. Downstream code then never branches on which form the author used. Getting this normalization in early is what keeps the resolver, exporter and renderer free of special cases.
+Normalize both forms to the same internal structure — a target column owns a list of rules, each owning a list of source refs — in the hand-rolled YAML validator, during the parse-tree-to-struct conversion. Downstream code then never branches on which form the author used. Getting this normalization in early is what keeps the resolver, exporter and renderer free of special cases.
 
 Every edge is born from a rule, so `lineage_edge.rule_id` is `NOT NULL`. The sugar form creates an implicit rule with `is_default = 1` and `when_expr = NULL`.
 

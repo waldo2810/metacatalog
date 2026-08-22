@@ -1,6 +1,6 @@
 # OPS-02 — `validate` usable as a CI gate
 
-**Epic:** Project ops · **Priority:** P2 · **Depends on:** VAL-03, OPS-01
+**Epic:** Project ops · **Priority:** P2 · **Depends on:** VAL-03, OPS-01, OPS-03
 
 ## Story
 
@@ -58,8 +58,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
-      - run: uv run mc validate --offline --format github
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo run --release -- validate --offline --format github
 ```
 
 Offline is the default for PR checks deliberately. The runner will not reach an internal Azure VM without extra plumbing, and a gate that needs a VPN is a gate that gets disabled within a month. The offline check still catches the majority of authoring mistakes.

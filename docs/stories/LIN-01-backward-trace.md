@@ -77,7 +77,7 @@ SELECT * FROM up;
 
 `UNION` rather than `UNION ALL` is deliberate: it terminates on a cycle instead of looping forever. VAL-03 rejects cycles, but a query that hangs when data is bad is a bad query — traversal must be safe independently of validation having been run.
 
-Fetch the ring of ids with the CTE, then fetch node and rule detail in one follow-up query keyed by those ids. Building the tree in Python from two flat result sets is simpler and faster than trying to shape the CTE output directly.
+Fetch the ring of ids with the CTE, then fetch node and rule detail in one follow-up query keyed by those ids. Building the tree in application code from two flat result sets is simpler and faster than trying to shape the CTE output directly.
 
 Group by rule when printing (AC3); a flat parent list loses which branch a source belongs to, which is exactly the information a conditional mapping exists to record.
 

@@ -1,6 +1,6 @@
 # VAL-01 — Fail on unresolved column refs, with file, line and suggestions
 
-**Epic:** Validation · **Priority:** P0 · **Depends on:** MOD-02
+**Epic:** Validation · **Priority:** P0 · **Depends on:** MOD-02, INFRA-01
 
 ## Story
 
@@ -62,9 +62,9 @@ catalog/warehouse/dim_customer.yml:17
     CustomerTypeId
 ```
 
-**Line numbers.** Pydantic reports an error *path* (`columns.3.rules.0.sources.1`), not a line. `spec/lines.py` walks the ruamel round-trip tree along that path and reads `.lc.line` off the node. Keep the ruamel tree alongside the parsed model for the whole load; discarding it after parsing is what makes line reporting impossible to retrofit.
+**Line numbers.** The hand-rolled YAML parser must attach a line number to every node it produces, since there is no `ruamel`-equivalent crate to lean on. Validation walks the parsed tree directly and reads the line off the node it is checking — keep that tree (not just the validated struct) alive for the whole load; discarding it after parsing is what makes line reporting impossible to retrofit.
 
-Suggestions use `difflib.get_close_matches(name, candidates, n=3, cutoff=0.6)` against the candidate set from AC4/AC5. No fuzzy-match dependency needed.
+Suggestions use a hand-rolled nearest-match ranking (e.g. Levenshtein distance, top 3, some similarity cutoff) against the candidate set from AC4/AC5 — no fuzzy-match crate; this is small enough to write directly against the zero-dependency policy.
 
 Resolve against a URN → id dict built once per load, and keep a parallel index keyed by table URN so AC4's narrowing costs nothing extra.
 

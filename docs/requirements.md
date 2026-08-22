@@ -2,9 +2,9 @@
 
 ## Problem
 
-Data lineage for the client currently lives in a 50-tab Excel workbook wired together with `XLOOKUP`/`XMATCH`. It is unreviewable, uncollaborative, and breaks silently when a source schema changes. It is already strained at two source systems, and more are coming.
+Some organization's data lineage live in 50-tab Excel workbook wired together with `XLOOKUP`/`XMATCH`. It is unreviewable, uncollaborative, and breaks silently when a source schema changes. It is already strained at two source systems, and more are coming.
 
-Commercial catalogs (Collate, Atlan) were rejected on cost: the client needs lineage, not a platform.
+Commercial catalogs (Collate, Atlan) were rejected on cost: orgs need lineage, not a platform.
 
 A second need sits alongside lineage: **"which processes use this field?"** — meaning consumers (business processes, reports, applications), not ETL jobs. Combined with mapping coverage, this tells us what is actually worth building in the warehouse.
 
@@ -58,7 +58,7 @@ mart://finance/FactRevenue#Amount
 process://report/monthly-billing
 ```
 
-YAML references URNs. Every join is on URN, never on autoincrement id. `urn.py` is built first and its format is frozen.
+YAML references URNs. Every join is on URN, never on autoincrement id. `urn.rs` is built first and its format is frozen.
 
 ### 2. `origin` on every row: `ingested` | `declared`
 
@@ -72,22 +72,22 @@ A column absent from an ingest run is marked, never hard-deleted. This lets vali
 
 ## Stack
 
-Python 3.12 — chosen because `sqlglot` (Phase 2 auto-lineage from view/proc SQL) has no equivalent elsewhere.
+Rust — hard zero-dependency policy: `Cargo.toml` `[dependencies]` stays empty except for database driver/client crates, which are allowed by policy. Never add a *non-driver* crate without asking first; solve with `std` or hand-written code instead. (Supersedes the project's original Python-based stack — Phase 1 was scoped assuming Python 3.12 for `sqlglot`, but the language was switched to Rust and that rationale no longer applies.)
 
 | Concern | Choice |
 |---|---|
-| CLI | stdlib `argparse` |
-| YAML parsing | `ruamel.yaml`, round-trip mode (retains line numbers) |
-| YAML schema | Pydantic v2 |
-| Error line mapping | `spec/lines.py` — maps Pydantic error paths to ruamel node lines |
-| DB | SQLAlchemy Core + SQLite (Postgres later by URL change) |
+| CLI | hand-rolled arg parsing (`src/cli.rs`), no `clap` |
+| YAML parsing | hand-rolled subset parser that retains line numbers on every node, no `serde_yaml`/`ruamel` equivalent |
+| YAML schema | hand-rolled validation over the parsed tree, no `serde`/Pydantic equivalent |
+| Error line mapping | validation reads the line straight off the parse-tree node it is checking — no separate mapping step, since the parser already carries line numbers |
+| DB | `rusqlite` (bundled SQLite), approved 2026-08-22 during OPS-01 because the store is specified as SQLite with `PRAGMA user_version` migrations |
 | Migrations | `PRAGMA user_version` runner over numbered `.sql` files |
-| SQL Server | `pymssql` and `pyodbc` behind one driver interface |
-| Traversal | Hand-written recursive CTE via `text()` |
-| Export / render | stdlib `csv`; Mermaid by string building |
-| Tests / packaging | `pytest`; `uv` + `hatchling` |
+| SQL Server | a database driver crate (e.g. `tiberius`), allowed under the database-driver exception — specific crate not yet pinned |
+| Traversal | Hand-written recursive CTE, executed as raw SQL through `rusqlite` |
+| Export / render | `std::io`/`String` for CSV; Mermaid by string building |
+| Tests / packaging | `cargo test`; `cargo build` |
 
-Four runtime dependencies: `ruamel.yaml`, `pydantic`, `sqlalchemy`, one SQL Server driver.
+Runtime dependencies are `rusqlite` plus whatever database driver crates ingestion needs — all database driver/client crates are allowed by policy; every other crate still needs sign-off.
 
 ## Data model
 
@@ -131,9 +131,5 @@ Asset-level lineage is a **view** over `lineage_edge` grouped by asset pair — 
 Web UI · authentication · static HTML viewer · SQL parsing / auto-lineage from views and procs · ADF/SSIS pipeline connectors · standalone `diff` command (run history is stored; the report waits) · business glossary · tags · data quality.
 
 The connector interface (ING-01) and invariant #2 keep all of these cheap to add later.
-
-## Estimate
-
-≈ 31 working days ≈ 1.5 months solo full-time; ~3 months at half time. Steps through LIN-03 (~3 weeks) already beat the spreadsheet.
 
 See [stories/README.md](stories/README.md) for the story index.

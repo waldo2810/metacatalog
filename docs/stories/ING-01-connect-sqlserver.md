@@ -24,12 +24,14 @@ Then each asset records `kind` as `table` or `view`.
 **AC3 — driver independence**
 Given the connector module
 When it is read
-Then it imports no driver package directly; it obtains a connection from `ingest/drivers.py`.
+Then it depends on no driver type directly; it obtains a connection from `ingest/drivers.rs`.
 
 **AC4 — driver selection**
-Given a source configured with `driver: pymssql` or `driver: pyodbc`
+Given a source configured with `driver: tiberius` (or whichever driver names are eventually offered)
 When I run `mc ingest`
-Then that driver is used, and an unavailable driver produces a clear install hint rather than a raw `ImportError`.
+Then that driver is used, and a driver that cannot be reached produces a clear error rather than a raw panic.
+
+Database driver/client crates are allowed under the project's dependency policy (zero-dependency otherwise), so a SQL Server driver crate — e.g. `tiberius` — can be added to `Cargo.toml` without a separate exception request. Specific crate choice is still open.
 
 **AC5 — progress and summary**
 Given ingestion of several databases
@@ -64,12 +66,13 @@ WHERE o.type IN ('U', 'V');
 
 Connector shape — keep discovery pure so it can be tested against fixtures with no database:
 
-```python
-class Connector(Protocol):
-    def discover(self) -> Iterator[AssetRecord]: ...
+```rust
+trait Connector {
+    fn discover(&self) -> impl Iterator<Item = AssetRecord>;
+}
 ```
 
-`AssetRecord` is a plain dataclass of URN + metadata + columns. Persistence lives in `store/repo.py`, never in the connector.
+`AssetRecord` is a plain struct of URN + metadata + columns. Persistence lives in `store/repo.rs`, never in the connector.
 
 Normalize `data_type` to a display form at ingest time (`nvarchar(200)`, `decimal(18,2)`) so exports and type-mismatch warnings compare strings, not tuples.
 

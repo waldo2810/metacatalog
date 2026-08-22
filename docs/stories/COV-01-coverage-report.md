@@ -70,7 +70,7 @@ Left join ingested columns against an aggregate of outgoing edges and an aggrega
 
 Table-level process usage (USE-02 AC3) must count toward every column of that table, or fields in a table someone flagged wholesale will look unwanted. Do this as a UNION in the usage aggregate.
 
-Reuse the "served" query from USE-03 (`graph/coverage.py`) so `mc process` and `mc coverage` can never disagree about whether a column is mapped.
+Reuse the "served" query from USE-03 (`graph/coverage.rs`) so `mc process` and `mc coverage` can never disagree about whether a column is mapped.
 
 Exclude soft-deleted columns by default; `--include-deleted` shows them, which doubles as a cleanup list for mappings pointing at dead fields.
 

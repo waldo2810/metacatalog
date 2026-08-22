@@ -59,11 +59,11 @@ AC7 is not fussiness. Transform text like `=CONCAT(...)` will absolutely appear 
 
 AC8 means a stable `ORDER BY target_urn, rule.ordinal, source_urn` and no timestamps in the body. A committed, diffable export gives the team change history for free — the review artifact the workbook never had.
 
-stdlib `csv` with `newline=''` and `encoding='utf-8-sig'`. No pandas.
+Hand-written CSV writer over `std::io::Write`, with a UTF-8 BOM written first and `\r\n` line endings — no CSV crate.
 
 Stream rows rather than materializing; at 10k columns this is small, but streaming costs nothing and removes any ceiling.
 
-Denormalize URN parts in SQL, not Python — the parts are already stored as columns on `asset`, so re-parsing URNs to split them is both slower and a second source of truth.
+Denormalize URN parts in SQL, not in application code — the parts are already stored as columns on `asset`, so re-parsing URNs to split them is both slower and a second source of truth.
 
 ## Verification
 

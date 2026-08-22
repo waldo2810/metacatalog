@@ -1,0 +1,10 @@
+[package]
+name = "mc"
+version = "0.1.0"
+edition = "2024"
+description = "MetaCatalog"
+authors = ["The MetaCatalog Authors"]
+license = "Apache-2.0"
+readme = "README.md"
+
+[dependencies]
